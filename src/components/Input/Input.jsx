@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import { CalendarDays } from 'lucide-react';
 import 'react-datepicker/dist/react-datepicker.css';
 
-export const Input = ({ label, id, name, type, placeholder, className, wrapperClassName, value, onChange, required }) => {
+export const Input = ({ label, id, name, type, placeholder, className, wrapperClassName, value, onChange, required, error }) => {
     const baseInputClasses = `
         w-full 
         p-3.5
@@ -16,6 +16,7 @@ export const Input = ({ label, id, name, type, placeholder, className, wrapperCl
         active:border-primary-normal 
         rounded-xl 
         bg-white
+        ${error ? 'border-red-500' : ''}
     `;
 
     const mergedClasses = twMerge(baseInputClasses, className);
@@ -55,6 +56,9 @@ export const Input = ({ label, id, name, type, placeholder, className, wrapperCl
                     required={required}
                 />
             )}
+            {error && (
+                <p className="text-red-500 text-xs mt-1">{error}</p>
+            )}
         </div>
     )
 };
@@ -69,5 +73,6 @@ Input.propTypes = {
     wrapperClassName: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
-    required: PropTypes.bool
+    required: PropTypes.bool,
+    error: PropTypes.string
 };
