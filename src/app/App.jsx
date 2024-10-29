@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { HomePage, LoginPage, NotFoundPage, RegisterPage, AboutPage, ContactUsPage} from '../pages';
-import { ABOUT_PATH, CONTACT_US_PATH, HOME_PATH, LOGIN_PATH, NOT_FOUND_PATH, REGISTER_PATH, USER_PROFILE } from '../routes';
+import { ABOUT_PATH, CONTACT_US_PATH, HOME_PATH, LOGIN_PATH, NOT_FOUND_PATH, REGISTER_PATH, USER_PROFILE,ACTIVE_QR } from '../routes';
 import { ProfilePage } from '../pages/auth/Profile/ProfilePage';
+import { ActiveQR } from '../pages/Active/ActiveQR';
 import { Footer, Header } from '../components';
 import { ToastContainer } from 'react-toastify';
 import { useEffect } from 'react';
@@ -30,6 +31,7 @@ function App() {
         <Route path={LOGIN_PATH} element={<LoginPage />} />
         <Route path={REGISTER_PATH} element={<RegisterPage />} />
         <Route path={USER_PROFILE} element={<ProfilePage />} />
+        <Route path={ACTIVE_QR} element={<ActiveQR />} />
         <Route path={ABOUT_PATH} element={<AboutPage />} />
         <Route path={CONTACT_US_PATH} element={<ContactUsPage />} />
         <Route path={NOT_FOUND_PATH} element={<NotFoundPage />} />

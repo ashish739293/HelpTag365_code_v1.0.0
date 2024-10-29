@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { MoveLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formOptions } from '../../../constants';
-import { HOME_PATH } from '../../../routes';
-import { FormButton } from '../../../components';
+import { HOME_PATH,ACTIVE_QR } from '../../../routes';
 import { HeroBgSection, Testimony, Checkbox, Input, ModularForm, Select } from '../../../components';
 import { toast } from 'react-toastify';
 
@@ -123,8 +122,9 @@ export function ProfilePage() {
                         <Testimony wrapperClassName='text-start' startClassName='!justify-start' />
                     </div>
                     <div className='col-span-1 md:col-span-3 lg:col-span-1 xl:px-8'>
+                    
                         <ModularForm title="Welcome, pradiep kummarr" description="please active your QR code" submitButtonName='update' onSubmit={handleSubmit}>
-                            {isActiveQR ? (<FormButton type="submit">Activate Your QR</FormButton>) : ('')}
+                        {isActiveQR ? (<Link to={ACTIVE_QR} className='w-full p-3 bg-primary-normal text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors ' >Activate Your QR</Link>) : ('')}
                             <div className='grid grid-cols-2 gap-x-4 gap-y-2 md:gap-y-4'>
                                 <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Full name" id="fullName" name="fullName" type="text" placeholder="Your full name" value={registerFormData.fullName} onChange={handleChange} error={errors.fullName} required="true" />
                                 <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Phone number" id="phone" name="phone" type="number" placeholder="Enter your phone number" value={registerFormData.phone} onChange={handleChange} error={errors.phone} />

@@ -5,3 +5,4 @@ export const REGISTER_PATH = '/register';
 export const CONTACT_US_PATH = '/contact';
 export const NOT_FOUND_PATH = '*';
 export const USER_PROFILE = '/profile';
+export const ACTIVE_QR = '/activeqr';
