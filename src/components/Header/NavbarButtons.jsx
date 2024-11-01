@@ -1,6 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { CONTACT_US_PATH, ABOUT_PATH, REGISTER_PATH, USER_PROFILE } from '../../routes';
 import { TrialButton } from '../Misc/TrialButton';
+import { useUserData } from '../../Context';
+import Cookies from 'js-cookie';
 
 // const navbarLinks = [
 //     { title: 'About us', path: ABOUT_PATH },
@@ -10,7 +12,14 @@ import { TrialButton } from '../Misc/TrialButton';
 
 export function NavbarButtons() {
     const location = useLocation();
+<<<<<<< HEAD
     const isLogged = false;
+=======
+    // const {isLogin} = useUserData();
+    const isLogin = Cookies.get('isLoggedIn');
+
+    // const isLogged = false;
+>>>>>>> origin/profile
     // const getLinkStyles = (path) => {
     //     const baseStyles = "w-full md:w-auto p-3 px-6 bg-white text-darker text-sm font-normal rounded-xl shadow-main text-center";
     //     const activeStyles = "opacity-50 line-through";
@@ -33,7 +42,7 @@ export function NavbarButtons() {
             <Link to={CONTACT_US_PATH} className={`w-full md:w-auto p-3 px-6 bg-white text-darker text-sm font-normal rounded-xl shadow-main text-center ${location.pathname === CONTACT_US_PATH ? 'opacity-50 line-through' : ''}`} >
                 Contact us
             </Link>
-            {isLogged ? (<Link to={USER_PROFILE} className={`w-full md:w-auto p-3 px-6 bg-white text-darker text-sm font-normal rounded-xl shadow-main text-center ${location.pathname === USER_PROFILE ? 'opacity-50 line-through' : ''}`}>
+            {isLogin ? (<Link to={USER_PROFILE} className={`w-full md:w-auto p-3 px-6 bg-white text-darker text-sm font-normal rounded-xl shadow-main text-center ${location.pathname === USER_PROFILE ? 'opacity-50 line-through' : ''}`}>
                 Profile
             </Link>) : (<Link to={REGISTER_PATH} className={`w-full md:w-auto p-3 px-6 bg-white text-darker text-sm font-normal rounded-xl shadow-main text-center ${location.pathname === REGISTER_PATH ? 'opacity-50 line-through' : ''}`}>
                 Register

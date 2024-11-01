@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { MoveLeft } from 'lucide-react';
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import { HOME_PATH } from '../../routes';
 import { HeroBgSection } from '../../components';
@@ -7,6 +8,12 @@ import { Testimony } from '../../components';
 import { Input } from '../../components';
 import { ModularForm } from '../../components';
 
+=======
+import { Link, useNavigate } from 'react-router-dom';
+import { HOME_PATH } from '../../routes';
+import { HeroBgSection, Testimony, Checkbox, Input, ModularForm } from './../../components';
+import { toast } from 'react-toastify';
+>>>>>>> origin/profile
 
 
 export function ActiveQR() {

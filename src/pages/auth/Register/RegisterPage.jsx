@@ -5,46 +5,48 @@ import { formOptions } from '../../../constants';
 import { HOME_PATH, LOGIN_PATH } from '../../../routes';
 import { HeroBgSection, Testimony, Checkbox, Input, ModularForm, Select } from '../../../components';
 import { toast } from 'react-toastify';
-
+import { REGISTER_API } from '../../../components/api';
 
 const defaultFormData = {
-    fullName: '',
+    name: '',
     phone: '',
     email: '',
-    carNumber: '',
-    insuranceExpDate: '',
-    PUCExpDate: '',
+    car_number: '',
+    ins_exp_date: '',
+    puc_exp_date: '',
     referralCode: '',
-    deliveryAddress: '',
+    delivery_address: '',
     gender: '',
-    bloodGroup: '',
+    blood_group: '',
     height: '',
     weight: '',
-    state: '',
-    city: '',
+    state_id: '',
+    city_id: '',
     password: '',
-    confirmPassword: '',
+    password_confirmation: '',
     rememberMe: false
 }
 
 export function RegisterPage() {
     const [registerFormData, setRegisterFormData] = useState(defaultFormData);
     const [errors, setErrors] = useState({
-        fullName: '',
+        name: '',
         phone: '',
         email: '',
-        carNumber: '',
-        deliveryAddress: '',
+        car_number: '',
+        delivery_address: '',
         gender: '',
-        bloodGroup: '',
+        blood_group: '',
         height: '',
         weight: '',
-        state: '',
-        city: '',
+        state_id: '',
+        city_id: '',
         password: '',
-        confirmPassword: '',
+        password_confirmation: '',
     });
     const navigate = useNavigate();
+    const [states, setStates] = useState([]);
+    const [cities, setCities] = useState([]);
     // const [token, setToken] = useState('');
 
 
@@ -65,7 +67,7 @@ export function RegisterPage() {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:8000/api/v1/register', {
+            const response = await fetch(REGISTER_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -79,9 +81,8 @@ export function RegisterPage() {
                 toast.success(data.message || 'Registration Successful!', { position: 'top-right' });
                 setRegisterFormData(defaultFormData);
                 setErrors({});
-                setTimeout(() => {
-                    navigate('/login');
-                }, 2000);
+                navigate('/login');
+
             } else if (response.status === 422) {
                 setErrors(data.errors || {});
                 toast.error('Please correct the highlighted errors.', { position: 'top-right' });
@@ -106,6 +107,38 @@ export function RegisterPage() {
         window.scrollTo(0, 0);
     }, [])
 
+    useEffect(() => {
+        // Fetch states when the component mounts
+        const fetchStates = async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/countries/101/states`); // Replace with actual country ID
+                const data = await response.json();
+                setStates(data);
+            } catch (error) {
+                toast.error('Error fetching states: ' + error.message);
+            }
+        };
+
+        fetchStates();
+    }, []);
+
+
+    const handleStateChange = async (stateId) => {
+        setRegisterFormData((prevData) => ({ ...prevData, state_id: stateId, city: '' })); // Reset city when state changes
+        if (stateId) {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/states/${stateId}/cities`); // Replace with actual API
+                const data = await response.json();
+                setCities(data); // Set the fetched cities
+            } catch (error) {
+                toast.error('Error fetching cities: ' + error.message);
+            }
+        } else {
+            setCities([]); // Clear cities if no state is selected
+        }
+    };
+
+
     return (
         <main className='relative w-full h-full px-2.5 md:px-8 overflow-hidden'>
             <HeroBgSection sectionClassName='!pb-2'>
@@ -125,36 +158,36 @@ export function RegisterPage() {
                     <div className='col-span-1 md:col-span-3 lg:col-span-1 xl:px-8'>
                         <ModularForm title="Register" description="Register and get your HelpTag QR code." submitButtonName='Register' onSubmit={handleSubmit}>
                             <div className='grid grid-cols-2 gap-x-4 gap-y-2 md:gap-y-4'>
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Full name" id="fullName" name="fullName" type="text" placeholder="Your full name" value={registerFormData.fullName} onChange={handleChange} error={errors.fullName} required="true" />
+                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Full name" id="name" name="name" type="text" placeholder="Your full name" value={registerFormData.name} onChange={handleChange} error={errors.name} required="true" />
                                 <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Phone number" id="phone" name="phone" type="number" placeholder="Enter your phone number" value={registerFormData.phone} onChange={handleChange} error={errors.phone} />
 
                                 <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Email address" id="email" name="email" type="email" placeholder="example@gmail.com" value={registerFormData.email} onChange={handleChange} error={errors.email} required="true" />
 
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Car number" id="carNumber" name="carNumber" type="text" placeholder="Enter your car number" value={registerFormData.carNumber} onChange={handleChange} error={errors.carNumber} required="true" />
+                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Car number" id="car_number" name="car_number" type="text" placeholder="Enter your car number" value={registerFormData.car_number} onChange={handleChange} error={errors.car_number} required="true" />
 
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Insurance expiry date" id="insuranceExpDate" name="insuranceExpDate" type="date" placeholder="dd-mm-yyyy" value={registerFormData.insuranceExpDate} onChange={handleChange} error={errors.insuranceExpDate} />
+                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Insurance expiry date" id="ins_exp_date" name="ins_exp_date" type="date" placeholder="dd-mm-yyyy" value={registerFormData.ins_exp_date} onChange={handleChange} error={errors.ins_exp_date} />
 
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="PUC expiry date" id="PUCExpDate" name="PUCExpDate" type="date" placeholder="dd-mm-yyyy" value={registerFormData.PUCExpDate} onChange={handleChange} error={errors.PUCExpDate} />
+                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="PUC expiry date" id="puc_exp_date" name="puc_exp_date" type="date" placeholder="dd-mm-yyyy" value={registerFormData.puc_exp_date} onChange={handleChange} error={errors.puc_exp_date} />
 
                                 <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Referral code" id="referralCode" name="referralCode" type="text" placeholder="Enter referral code" value={registerFormData.referralCode} onChange={handleChange} error={errors.referralCode} />
 
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Delivery address" id="deliveryAddress" name="deliveryAddress" type="text" placeholder="Enter delivery address" value={registerFormData.deliveryAddress} onChange={handleChange} error={errors.deliveryAddress} required="true" />
+                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Delivery address" id="delivery_address" name="delivery_address" type="text" placeholder="Enter delivery address" value={registerFormData.delivery_address} onChange={handleChange} error={errors.delivery_address} required="true" />
 
                                 <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Gender" id="gender" name="gender" options={formOptions.gender} placeholder="Select your gender" value={registerFormData.gender} onChange={handleChange} error={errors.gender} required="true" />
 
-                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='Blood group' id="bloodGroup" name="bloodGroup" options={formOptions.bloodGroup} placeholder="Select blood group" value={registerFormData.bloodGroup} onChange={handleChange} error={errors.bloodGroup} required="true" />
+                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='Blood group' id="blood_group" name="blood_group" options={formOptions.bloodGroup} placeholder="Select blood group" value={registerFormData.blood_group} onChange={handleChange} error={errors.blood_group} required="true" />
 
                                 <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='Height (in inches)' id="height" name="height" options={formOptions.height} placeholder="Select height" value={registerFormData.height} onChange={handleChange} error={errors.height} required="true" />
 
                                 <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='Weight (in kg)' id="weight" name="weight" options={formOptions.weight} placeholder="Select weight" value={registerFormData.weight} onChange={handleChange} error={errors.weight} required="true" />
 
-                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='State' id="state" name="state" options={formOptions.statesCitiesOptions} placeholder="Select state" value={registerFormData.state} onChange={handleChange} search error={errors.state} required="true" />
+                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='State' id="state_id" name="state_id" options={states.map(state => ({ value: state.id, label: state.name }))} placeholder="Select state" value={registerFormData.state_id} onChange={(e) => handleStateChange(parseInt(e.target.value))} search error={errors.state} required="true" />
 
-                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='City' id="city" name="city" options={cityOptions} placeholder="Select city" value={registerFormData.city} onChange={handleChange} disabled={!registerFormData.state} search error={errors.city} required="true" />
+                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='City' id="city_id" name="city_id" options={cities.map(city => ({ value: city.id, label: city.name }))} placeholder="Select city" value={registerFormData.city_id} onChange={handleChange} disabled={!registerFormData.state_id} search error={errors.city_id} required="true" />
 
                                 <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Password" id="password" name="password" type="password" placeholder="Enter password" value={registerFormData.password} onChange={handleChange} error={errors.password} required="true" />
 
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Confirm password" id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm your password" value={registerFormData.password} onChange={handleChange} error={errors.confirmPassword} required="true" />
+                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Confirm password" id="password_confirmation" name="password_confirmation" type="password" placeholder="Confirm your password" value={registerFormData.password} onChange={handleChange} error={errors.password_confirmation} required="true" />
 
                                 <Checkbox wrapperClassName='col-span-2' label="I agree to the terms & conditions." id="terms" name="terms" isChecked={registerFormData.terms} toggleCheckbox={handleCheckboxChange} />
                             </div>
