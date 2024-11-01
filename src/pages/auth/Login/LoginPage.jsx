@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
-import { MoveLeft } from 'lucide-react';
+import {  MoveLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HOME_PATH, REGISTER_PATH } from '../../../routes';
 import { HeroBgSection, Testimony, Checkbox, Input, ModularForm } from '../../../components';
 import { toast } from 'react-toastify';
+import { LOGIN_API ,GET_USER_DETAILS } from '../../../components/api';
+import { useUserData } from '../../../Context';
+import Cookies from 'js-cookie';
+
+const useToken = Cookies.get('token');
 
 const defaultFormData = {
     phone: '',
@@ -14,6 +19,7 @@ const defaultFormData = {
 export function LoginPage() {
     const [loginFormData, setLoginFormData] = useState(defaultFormData);
     const navigate = useNavigate();
+    const {setIsLogin ,setUserDetails} = useUserData();
 
     const handleChange = (e) => {
         setLoginFormData({ ...loginFormData, [e.target.name]: e.target.value });
@@ -23,11 +29,20 @@ export function LoginPage() {
         setLoginFormData({ ...loginFormData, [e.target.name]: e.target.checked });
     }
 
+    useEffect(() => {
+        console.log("Token => ",useToken);
+
+        if (useToken) {
+            navigate('/profile'); // Redirect to the profile page if the token exists
+        }  
+
+     }, [useToken ,navigate]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
       
         try {
-            const response = await fetch('http://localhost:8000/api/v1/login', {
+            const response = await fetch(LOGIN_API, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -40,9 +55,12 @@ export function LoginPage() {
                 // Success: Save the token, show success toast, and redirect
                 toast.success(data.message || 'Login Successful!', { position: "top-right" });
                 setLoginFormData(defaultFormData);
-                setTimeout(() => {
-                  navigate('/'); // Redirect to the dashboard or any other page
-                }, 2000); // Wait 2 seconds before redirecting
+                setUserDetails(data.data.user);
+                Cookies.set('isLoggedIn',true, { expires: 1 }); // expires in 1 days
+                Cookies.set('token',data.data.token, { expires: 1 }); // expires in 1 days
+                setIsLogin(true);
+                navigate('/profile'); // Redirect to the dashboard or any other page
+
             } else {
                 // Error: Handle invalid credentials or other errors
                 // setError(data.message || 'Login failed');

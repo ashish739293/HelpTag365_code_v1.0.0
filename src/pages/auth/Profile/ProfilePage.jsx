@@ -2,73 +2,89 @@ import { useState, useEffect, useMemo } from 'react';
 import { MoveLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { formOptions } from '../../../constants';
-import { HOME_PATH,ACTIVE_QR } from '../../../routes';
+import { HOME_PATH, ACTIVE_QR } from '../../../routes';
 import { HeroBgSection, Testimony, Checkbox, Input, ModularForm, Select } from '../../../components';
 import { toast } from 'react-toastify';
-
-
-const defaultFormData = {
-    fullName: '',
-    phone: '',
-    email: '',
-    carNumber: '',
-    insuranceExpDate: '',
-    PUCExpDate: '',
-    referralCode: '',
-    deliveryAddress: '',
-    gender: '',
-    bloodGroup: '',
-    height: '',
-    weight: '',
-    state: '',
-    city: '',
-    password: '',
-    confirmPassword: '',
-    rememberMe: false
-}
+import { useUserData } from '../../../Context';
+import Cookies from 'js-cookie';
+import { GET_USER_DETAILS ,UPDATE_USER_DETAILS} from '../../../components/api';
 
 export function ProfilePage() {
-    const [registerFormData, setRegisterFormData] = useState(defaultFormData);
-    const [errors, setErrors] = useState({
-        fullName: '',
-        phone: '',
-        email: '',
-        carNumber: '',
-        deliveryAddress: '',
-        gender: '',
-        bloodGroup: '',
-        height: '',
-        weight: '',
-        state: '',
-        city: '',
-        password: '',
-        confirmPassword: '',
-    });
+    const { userDetails, setUserDetails } = useUserData();
     const navigate = useNavigate();
-    // const [token, setToken] = useState('');
+    const [registerFormData, setRegisterFormData] = useState({});
+    const [errors, setErrors] = useState({});
+    const [states, setStates] = useState([]);
+    const [cities, setCities] = useState([]);
 
+    const userToken = Cookies.get('token');
+
+    // Redirect to login if token is not set
+    useEffect(() => {
+        if (!userToken) {
+            navigate('/login');
+        }
+    }, [userToken, navigate]);
+
+    // Fetch user details only if they are not already available
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+            if (userToken && Object.keys(userDetails).length === 0) {
+                try {
+                    const response = await fetch(GET_USER_DETAILS, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userToken}`,
+                        },
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        setUserDetails(data);
+                        setRegisterFormData(data); // Populate form with user data
+                    } else {
+                        // toast.error(data.message, { position: "top-right" });
+                        console.log(data.message);
+                    }
+                } catch (error) {
+                    // toast.error('An error occurred: ' + error.message, { position: "top-right" });
+                    console.log( error.message);
+
+                }
+            } else if (userDetails) {
+                // If userDetails is already set, populate the form data directly
+                // console.log("Already exits...",userDetails);
+                setRegisterFormData(userDetails);
+            }
+        };
+
+        fetchUserDetails();
+    }, [userToken, userDetails, setUserDetails]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        // setRegisterFormData({ ...registerFormData, [e.target.name]: e.target.value });
         setRegisterFormData((prevData) => ({
             ...prevData,
             [name]: value
         }));
-    }
+    };
 
     const handleCheckboxChange = (e) => {
-        setRegisterFormData({ ...registerFormData, [e.target.name]: e.target.checked });
-    }
+        setRegisterFormData((prevData) => ({
+            ...prevData,
+            [e.target.name]: e.target.checked
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:8000/api/v1/register', {
+            const response = await fetch(UPDATE_USER_DETAILS, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`,
                 },
                 body: JSON.stringify(registerFormData)
             });
@@ -76,36 +92,58 @@ export function ProfilePage() {
             const data = await response.json();
 
             if (response.ok) {
-                toast.success(data.message || 'Registration Successful!', { position: 'top-right' });
-                setRegisterFormData(defaultFormData);
+                toast.success(data.message || 'Update Successful!', { position: 'top-right' });
                 setErrors({});
-                setTimeout(() => {
-                    navigate('/login');
-                }, 2000);
             } else if (response.status === 422) {
                 setErrors(data.errors || {});
                 toast.error('Please correct the highlighted errors.', { position: 'top-right' });
             } else {
-                toast.error(data.message || 'Registration failed.', { position: 'top-right' });
+                toast.error(data.message || 'Update failed.', { position: 'top-right' });
             }
         } catch (error) {
-            setErrors('An error occurred: ' + error.message);
+            setErrors({ general: 'An error occurred: ' + error.message });
             toast.error('An error occurred: ' + error.message, { position: "top-right" });
         }
-    }
+    };
 
-    const cityOptions = useMemo(() => {
-        const selectedState = formOptions.statesCitiesOptions.find(state => state.value === registerFormData.state);
-        return selectedState
-            ? selectedState.cities
-                .sort((a, b) => a.label.localeCompare(b.label)) // Sort by the 'label' property
-            : [];
-    }, [registerFormData.state]);
+    // Fetch states
+    useEffect(() => {
+        const fetchStates = async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/countries/101/states`);
+                const data = await response.json();
+                setStates(data);
+            } catch (error) {
+                console.log('Error fetching states: ' + error.message);
+            }
+        };
+
+        fetchStates();
+    }, []);
+
+    const handleStateChange = async (stateId) => {
+        setRegisterFormData((prevData) => ({ ...prevData, state_id: stateId, city: '' }));
+        if (stateId) {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/states/${stateId}/cities`);
+                const data = await response.json();
+                setCities(data);
+            } catch (error) {
+                console.log('Error fetching cities: ' + error.message);
+            }
+        } else {
+            setCities([]);
+        }
+    };
 
     useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [])
+        if (registerFormData.state_id) {
+            handleStateChange(registerFormData.state_id);
+        }
+    }, [registerFormData.state_id]); // Dependency on state_id
+    
     const isActiveQR = true;
+
     return (
         <main className='relative w-full h-full px-2.5 md:px-8 overflow-hidden'>
             <HeroBgSection sectionClassName='!pb-2'>
@@ -122,50 +160,32 @@ export function ProfilePage() {
                         <Testimony wrapperClassName='text-start' startClassName='!justify-start' />
                     </div>
                     <div className='col-span-1 md:col-span-3 lg:col-span-1 xl:px-8'>
-                    
-                        <ModularForm title="Welcome, pradiep kummarr" description="please active your QR code" submitButtonName='update' onSubmit={handleSubmit}>
-                        {isActiveQR ? (<Link to={ACTIVE_QR} className='w-full p-3 bg-primary-normal text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors ' >Activate Your QR</Link>) : ('')}
+                        <ModularForm title={`Welcome, ${registerFormData.name}`} description="Please activate your QR code" submitButtonName='Update' onSubmit={handleSubmit}>
+                            {isActiveQR && (
+                                <Link to={ACTIVE_QR} className='w-full p-3 bg-primary-normal text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors'>
+                                    Activate Your QR
+                                </Link>
+                            )}
                             <div className='grid grid-cols-2 gap-x-4 gap-y-2 md:gap-y-4'>
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Full name" id="fullName" name="fullName" type="text" placeholder="Your full name" value={registerFormData.fullName} onChange={handleChange} error={errors.fullName} required="true" />
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Phone number" id="phone" name="phone" type="number" placeholder="Enter your phone number" value={registerFormData.phone} onChange={handleChange} error={errors.phone} />
-
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Email address" id="email" name="email" type="email" placeholder="example@gmail.com" value={registerFormData.email} onChange={handleChange} error={errors.email} required="true" />
-
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Car number" id="carNumber" name="carNumber" type="text" placeholder="Enter your car number" value={registerFormData.carNumber} onChange={handleChange} error={errors.carNumber} required="true" />
-
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Insurance expiry date" id="insuranceExpDate" name="insuranceExpDate" type="date" placeholder="dd-mm-yyyy" value={registerFormData.insuranceExpDate} onChange={handleChange} error={errors.insuranceExpDate} />
-
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="PUC expiry date" id="PUCExpDate" name="PUCExpDate" type="date" placeholder="dd-mm-yyyy" value={registerFormData.PUCExpDate} onChange={handleChange} error={errors.PUCExpDate} />
-
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Referral code" id="referralCode" name="referralCode" type="text" placeholder="Enter referral code" value={registerFormData.referralCode} onChange={handleChange} error={errors.referralCode} />
-
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Delivery address" id="deliveryAddress" name="deliveryAddress" type="text" placeholder="Enter delivery address" value={registerFormData.deliveryAddress} onChange={handleChange} error={errors.deliveryAddress} required="true" />
-
-                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Gender" id="gender" name="gender" options={formOptions.gender} placeholder="Select your gender" value={registerFormData.gender} onChange={handleChange} error={errors.gender} required="true" />
-
-                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='Blood group' id="bloodGroup" name="bloodGroup" options={formOptions.bloodGroup} placeholder="Select blood group" value={registerFormData.bloodGroup} onChange={handleChange} error={errors.bloodGroup} required="true" />
-
-                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='Height (in inches)' id="height" name="height" options={formOptions.height} placeholder="Select height" value={registerFormData.height} onChange={handleChange} error={errors.height} required="true" />
-
-                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='Weight (in kg)' id="weight" name="weight" options={formOptions.weight} placeholder="Select weight" value={registerFormData.weight} onChange={handleChange} error={errors.weight} required="true" />
-
-                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='State' id="state" name="state" options={formOptions.statesCitiesOptions} placeholder="Select state" value={registerFormData.state} onChange={handleChange} search error={errors.state} required="true" />
-
-                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='City' id="city" name="city" options={cityOptions} placeholder="Select city" value={registerFormData.city} onChange={handleChange} disabled={!registerFormData.state} search error={errors.city} required="true" />
-
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Password" id="password" name="password" type="password" placeholder="Enter password" value={registerFormData.password} onChange={handleChange} error={errors.password} required="true" />
-
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Confirm password" id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm your password" value={registerFormData.password} onChange={handleChange} error={errors.confirmPassword} required="true" />
-
-                                <Checkbox wrapperClassName='col-span-2' label="I agree to the terms & conditions." id="terms" name="terms" isChecked={registerFormData.terms} toggleCheckbox={handleCheckboxChange} />
+                                <Input label="Full name" id="name" name="name" type="text" placeholder="Your full name" value={registerFormData.name} onChange={handleChange} error={errors.name} required />
+                                <Input label="Phone number" id="phone" name="phone" type="number" placeholder="Enter your phone number" value={registerFormData.phone} onChange={handleChange} error={errors.phone} />
+                                <Input label="Email address" id="email" name="email" type="email" placeholder="example@gmail.com" value={registerFormData.email} onChange={handleChange} error={errors.email} required />
+                                <Input label="Car number" id="car_number" name="car_number" type="text" placeholder="Enter your car number" value={registerFormData.car_number} onChange={handleChange} error={errors.car_number} required />
+                                <Input label="Insurance expiry date" id="ins_exp_date" name="ins_exp_date" type="date" value={registerFormData.ins_exp_date} onChange={handleChange} error={errors.ins_exp_date} />
+                                <Input label="PUC expiry date" id="puc_exp_date" name="puc_exp_date" type="date" value={registerFormData.puc_exp_date} onChange={handleChange} error={errors.puc_exp_date} />
+                                <Input label="Referral code" id="referralCode" name="referralCode" type="text" placeholder="Enter referral code" value={registerFormData.referralCode} onChange={handleChange} error={errors.referralCode} />
+                                <Input label="Delivery address" id="delivery_address" name="delivery_address" type="text" placeholder="Enter delivery address" value={registerFormData.delivery_address} onChange={handleChange} error={errors.delivery_address} required />
+                                <Select label="Gender" id="gender" name="gender" options={formOptions.gender} placeholder="Select your gender" value={registerFormData.gender} onChange={handleChange} error={errors.gender} required />
+                                <Select label='Blood group' id="blood_group" name="blood_group" options={formOptions.bloodGroup} placeholder="Select blood group" value={registerFormData.blood_group} onChange={handleChange} error={errors.blood_group} required />
+                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='State' id="state_id" name="state_id" options={states.map(state => ({ value: state.id, label: state.name }))} placeholder="Select state" value={registerFormData.state_id} onChange={(e) => handleStateChange(parseInt(e.target.value))} search error={errors.state} required="true" />
+                                <Select wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label='City' id="city_id" name="city_id" options={cities.map(city => ({ value: city.id, label: city.name }))} placeholder="Select city" value={registerFormData.city_id} onChange={handleChange} disabled={!registerFormData.state_id} search error={errors.city_id} required="true" />
+                                <Select label='Height (in inches)' id="height" name="height" options={formOptions.height} placeholder="Select height" value={registerFormData.height} onChange={handleChange} error={errors.height} required />
+                                <Select label='Weight (in kg)' id="weight" name="weight" options={formOptions.weight} placeholder="Select weight" value={registerFormData.weight} onChange={handleChange} error={errors.weight} required />
                             </div>
                         </ModularForm>
-                    </div>
-                    <div className='grid md:hidden grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8'>
-                        <Testimony />
                     </div>
                 </div>
             </HeroBgSection>
         </main>
-    )
+    );
 }

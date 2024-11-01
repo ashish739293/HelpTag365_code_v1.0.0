@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { MoveLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { HOME_PATH, REGISTER_PATH } from '../../../routes';
-import { HeroBgSection, Testimony, Checkbox, Input, ModularForm } from '../../../components';
+import { HOME_PATH } from '../../routes';
+import { HeroBgSection, Testimony, Checkbox, Input, ModularForm } from './../../components';
 import { toast } from 'react-toastify';
 
 const defaultFormData = {
