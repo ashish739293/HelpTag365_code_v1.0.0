@@ -1,15 +1,50 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MoveLeft } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { HOME_PATH } from '../../routes';
-import { HeroBgSection, Testimony, Checkbox, Input, ModularForm } from './../../components';
+import { HeroBgSection, Testimony, Input, ModularForm } from './../../components';
 import { toast } from 'react-toastify';
+import { ACTIVE_QR } from '../../components/api';
 
-
-
+const defaultFormData = {
+    code: '',
+}
 export function ActiveQR() {
+    const [formData, setFormData] = useState(defaultFormData);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
+    const handleChange = async (e) => {
+        setFormData(prevState => ({
+            ...prevState,
+            [e.target.name]: e.target.value
+        }));
+    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(ACTIVE_QR, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                toast.success(data.message || 'QR code activated successfully', { position: "top-right" });
+                navigate('/');
+            } else {
+                toast.error(data.message || 'Login failed', { position: "top-right" });
+            }
+        } catch (error) {
+            toast.error('An error occurred: ' + error.message, { position: "top-right" });
+        } finally {
+            setIsLoading(false);
+        }
+    }
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [])
@@ -30,9 +65,9 @@ export function ActiveQR() {
                         <Testimony wrapperClassName='text-start' startClassName='!justify-start' />
                     </div>
                     <div className='col-span-1 md:col-span-3 lg:col-span-1 xl:px-8'>
-                        <ModularForm title="Active QR" description="Active Your QR code and Get More" submitButtonName='Activate' onSubmit={null}>
+                        <ModularForm title="Active QR" description="Active Your QR code and Get More" submitButtonName={isLoading ? 'Activating...' : 'Activate'} onSubmit={handleSubmit}>
                             <div className='grid grid-cols-2 gap-x-4 gap-y-2 md:gap-y-4'>
-                                <Input wrapperClassName='col-span-2' label="Activaion code" id="code" name="code" type="text" placeholder="Enter Your Code Here" value='' onChange={null} />
+                                <Input wrapperClassName='col-span-2' label="Activaion code" id="code" name="code" type="text" placeholder="Enter Your Code Here" value={formData.code} onChange={handleChange} />
                             </div>
                         </ModularForm>
                     </div>

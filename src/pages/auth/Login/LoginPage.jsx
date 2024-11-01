@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import {  MoveLeft } from 'lucide-react';
+import { MoveLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HOME_PATH, REGISTER_PATH } from '../../../routes';
 import { HeroBgSection, Testimony, Checkbox, Input, ModularForm } from '../../../components';
 import { toast } from 'react-toastify';
-import { LOGIN_API ,GET_USER_DETAILS } from '../../../components/api';
+import { LOGIN_API, GET_USER_DETAILS } from '../../../components/api';
 import { useUserData } from '../../../Context';
 import Cookies from 'js-cookie';
 
@@ -19,7 +19,7 @@ const defaultFormData = {
 export function LoginPage() {
     const [loginFormData, setLoginFormData] = useState(defaultFormData);
     const navigate = useNavigate();
-    const {setIsLogin ,setUserDetails} = useUserData();
+    const { setIsLogin, setUserDetails } = useUserData();
 
     const handleChange = (e) => {
         setLoginFormData({ ...loginFormData, [e.target.name]: e.target.value });
@@ -30,45 +30,45 @@ export function LoginPage() {
     }
 
     useEffect(() => {
-        console.log("Token => ",useToken);
+        console.log("Token => ", useToken);
 
         if (useToken) {
             navigate('/profile'); // Redirect to the profile page if the token exists
-        }  
+        }
 
-     }, [useToken ,navigate]);
+    }, [useToken, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-      
+
         try {
             const response = await fetch(LOGIN_API, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(loginFormData)
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginFormData)
             });
-      
+
             const data = await response.json();
-           if (response.ok) {
+            if (response.ok) {
                 // Success: Save the token, show success toast, and redirect
                 toast.success(data.message || 'Login Successful!', { position: "top-right" });
                 setLoginFormData(defaultFormData);
                 setUserDetails(data.data.user);
-                Cookies.set('isLoggedIn',true, { expires: 1 }); // expires in 1 days
-                Cookies.set('token',data.data.token, { expires: 1 }); // expires in 1 days
+                Cookies.set('isLoggedIn', true, { expires: 1 }); // expires in 1 days
+                Cookies.set('token', data.data.token, { expires: 1 }); // expires in 1 days
                 setIsLogin(true);
                 navigate('/profile'); // Redirect to the dashboard or any other page
 
             } else {
                 // Error: Handle invalid credentials or other errors
                 // setError(data.message || 'Login failed');
-                toast.error(data.message || 'Login failed',  { position: "top-right" });
-           }
+                toast.error(data.message || 'Login failed', { position: "top-right" });
+            }
         } catch (error) {
-        //   setError('An error occurred: ' + error.message);
-          toast.error('An error occurred: ' + error.message,  { position: "top-right" });
+            //   setError('An error occurred: ' + error.message);
+            toast.error('An error occurred: ' + error.message, { position: "top-right" });
         }
 
         setLoginFormData(defaultFormData);
