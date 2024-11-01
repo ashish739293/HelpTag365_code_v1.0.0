@@ -3,6 +3,7 @@ export { HeroBgSection } from './Hero/HeroBgSection';
 export { Input } from './Input/Input';
 export { Textarea } from './Input/Textarea';
 export { Checkbox } from './Input/Checkbox';
+export { RadioButton } from './Input/RadioButton';
 export { FormButton } from './Form/FormButton';
 export { ModularForm } from './Form/ModularForm';
 export { FilledSection } from './HOC/FilledSection';

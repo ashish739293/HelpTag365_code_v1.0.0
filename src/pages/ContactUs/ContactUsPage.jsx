@@ -5,12 +5,14 @@ import mapImg from '../../images/map.svg';
 import { HOME_PATH } from '../../routes';
 import { SubContent } from './SubContent';
 import { Checkbox, Input, ModularForm, Textarea, Accordion, QRSection, HeroBgSection } from '../../components';
+import { CONTACT_US } from '../../components/api';
+import { toast } from 'react-toastify';
 
 const defaultFormData = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    mobile: '',
+    fname: '',
+    lname: '',
+    mail: '',
+    phone: '',
     message: '',
     terms: false
 }
@@ -54,10 +56,34 @@ export function ContactUsPage() {
         setContactFormData({ ...contactFormData, [e.target.name]: e.target.checked });
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(contactFormData);
-        setContactFormData(defaultFormData);
+        
+        try {
+            const response = await fetch(CONTACT_US, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(contactFormData)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success(data.message || 'Contact Successful Send !', { position: 'top-right' });
+                setContactFormData(defaultFormData);
+            } else if (response.status === 422) {
+                toast.error('Please correct the highlighted errors.', { position: 'top-right' });
+            } else {
+                toast.error(data.message || 'Contact failed.', { position: 'top-right' });
+            }
+        } catch (error) {
+            setErrors('An error occurred: ' + error.message);
+            toast.error('An error occurred: ' + error.message, { position: "top-right" });
+        }
+
     }
 
     useEffect(() => {
@@ -88,10 +114,10 @@ export function ContactUsPage() {
                     <div className='col-span-1 md:col-span-3 lg:col-span-1 xl:px-8'>
                         <ModularForm title="Get in touch" description="You can reach us anytime 24/7." submitButtonName='Submit' onSubmit={handleSubmit}>
                             <div className='grid grid-cols-2 gap-x-4 gap-y-2 md:gap-y-4'>
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="First name" id="firstName" name="firstName" type="text" placeholder="Your first name" value={contactFormData.firstName} onChange={handleChange} required />
-                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Last name" id="lastName" name="lastName" type="text" placeholder="Your last name" value={contactFormData.lastName} onChange={handleChange} required />
-                                <Input wrapperClassName='col-span-2' label="Email address" id="email" name="email" type="email" placeholder="example@gmail.com" value={contactFormData.email} onChange={handleChange} required />
-                                <Input wrapperClassName='col-span-2' label="Mobile number" id="mobile" name="mobile" type="number" placeholder="+91 00000 00000" value={contactFormData.mobile} onChange={handleChange} required />
+                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="First name" id="fname" name="fname" type="text" placeholder="Your first name" value={contactFormData.fname} onChange={handleChange} required />
+                                <Input wrapperClassName='col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1' label="Last name" id="lname" name="lname" type="text" placeholder="Your last name" value={contactFormData.lname} onChange={handleChange} required />
+                                <Input wrapperClassName='col-span-2' label="Email address" id="mail" name="mail" type="email" placeholder="example@gmail.com" value={contactFormData.mail} onChange={handleChange} required />
+                                <Input wrapperClassName='col-span-2' label="Mobile number" id="phone" name="phone" type="number" placeholder="+91 00000 00000" value={contactFormData.phone} onChange={handleChange} required />
                                 <Textarea wrapperClassName='col-span-2' label="Description" id="message" name="message" placeholder="Please write here that how we can help you?" rows={4} value={contactFormData.message} onChange={handleChange} />
                                 <Checkbox wrapperClassName='col-span-2' label="I agree to the terms & conditions." id="terms" name="terms" isChecked={contactFormData.terms} toggleCheckbox={handleCheckboxChange} required />
                             </div>
@@ -126,7 +152,7 @@ export function ContactUsPage() {
                         <p className='text-sm text-dimmed'>If there are question you want to ask. We’ll answer all your question.</p>
                     </div>
                     <div className='flex flex-col sm:flex-row justify-start items-center gap-3'>
-                        <Input wrapperClassName='sm:mb-0 w-full md:2/5 xl:w-2/5' className='p-2.5' id="email" name="email" type="email" placeholder="example@gmail.com" />
+                        <Input wrapperClassName='sm:mb-0 w-full md:2/5 xl:w-2/5' className='p-2.5' id="mail" name="mail" type="email" placeholder="example@gmail.com" />
                         <button className="w-full sm:w-fit py-2.5 px-8 font-semibold border rounded-xl bg-primary-normal hover:bg-primary-normal-hover border-primary-normal-hover text-white cursor-pointer">
                             Submit
                         </button>

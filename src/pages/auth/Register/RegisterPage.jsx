@@ -6,7 +6,9 @@ import { HOME_PATH, LOGIN_PATH } from '../../../routes';
 import { HeroBgSection, Testimony, Checkbox, Input, ModularForm, Select } from '../../../components';
 import { toast } from 'react-toastify';
 import { REGISTER_API } from '../../../components/api';
+import Cookies from 'js-cookie';
 
+const useToken = Cookies.get('token');
 const defaultFormData = {
     name: '',
     phone: '',
@@ -106,6 +108,15 @@ export function RegisterPage() {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [])
+
+    useEffect(() => {
+        console.log("Token => ",useToken);
+
+        if (useToken) {
+            navigate('/profile'); // Redirect to the profile page if the token exists
+        }  
+
+     }, [useToken ,navigate]);
 
     useEffect(() => {
         // Fetch states when the component mounts
