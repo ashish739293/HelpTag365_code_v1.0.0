@@ -12,14 +12,11 @@ import Cookies from 'js-cookie';
 
 export function NavbarButtons() {
     const location = useLocation();
-<<<<<<< HEAD
     // const {isLogin} = useUserData();
     const isLogin = Cookies.get('isLoggedIn');
 
     // const isLogged = false;
-=======
-    const isLogged = false;
->>>>>>> origin/main
+
     // const getLinkStyles = (path) => {
     //     const baseStyles = "w-full md:w-auto p-3 px-6 bg-white text-darker text-sm font-normal rounded-xl shadow-main text-center";
     //     const activeStyles = "opacity-50 line-through";
