@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { HOME_PATH, REGISTER_PATH } from '../../../routes';
 import { HeroBgSection, Testimony, Checkbox, Input, ModularForm } from '../../../components';
 import { toast } from 'react-toastify';
-import { LOGIN_API, GET_USER_DETAILS } from '../../../components/api';
+import { LOGIN_API } from '../../../components/api';
 import { useUserData } from '../../../Context';
 import Cookies from 'js-cookie';
 
@@ -33,14 +33,13 @@ export function LoginPage() {
         console.log("Token => ", useToken);
 
         if (useToken) {
-            navigate('/profile'); // Redirect to the profile page if the token exists
+            navigate('/profile');
         }
 
     }, [useToken, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const response = await fetch(LOGIN_API, {
                 method: 'POST',
@@ -49,7 +48,6 @@ export function LoginPage() {
                 },
                 body: JSON.stringify(loginFormData)
             });
-
             const data = await response.json();
             if (response.ok) {
                 // Success: Save the token, show success toast, and redirect

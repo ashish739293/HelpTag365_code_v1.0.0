@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { MoveLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { formOptions ,processCards, sliderSettings } from '../../../constants';
+import { formOptions, processCards, sliderSettings } from '../../../constants';
 import { HOME_PATH, ACTIVE_QR } from '../../../routes';
-import { HeroBgSection, Testimony, Checkbox, Input, ModularForm, Select ,GradientSection,Badge,ProcessCard ,QRSection,RadioButton } from '../../../components';
+import { HeroBgSection, Testimony, Checkbox, Input, ModularForm, Select, GradientSection, Badge, ProcessCard, QRSection, RadioButton } from '../../../components';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
-import { GET_USER_DETAILS ,UPDATE_USER_DETAILS} from '../../../components/api';
+import { GET_USER_DETAILS, UPDATE_USER_DETAILS } from '../../../components/api';
 
 export function Service() {
     const navigate = useNavigate();
@@ -17,14 +17,14 @@ export function Service() {
     const handleReasonChange = (e) => {
         setSelectedReason(e.target.value);
     };
-    // Redirect to login if token is not set
+    
     useEffect(() => {
         if (!userToken) {
             // navigate('/login');
         }
     }, [userToken, navigate]);
 
-   
+
     const reasons = [
         "My car cannot leave because of your car.",
         "The lights of this car is on.",
@@ -34,7 +34,6 @@ export function Service() {
         "There is a baby or pet in car."
     ];
 
-  
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -62,7 +61,7 @@ export function Service() {
             toast.error('An error occurred: ' + error.message, { position: "top-right" });
         }
     };
-    
+
     const isActiveQR = true;
 
     return (
@@ -82,19 +81,19 @@ export function Service() {
                     </div>
                     <div className='col-span-1 md:col-span-3 lg:col-span-1 xl:px-8'>
                         <ModularForm title={`Select your reason`} description="Please select the reason why do you want to contact the vehicle owner." submitButtonName='Continue' onSubmit={handleSubmit}>
-                            
-                             <div className="space-y-3">
-                                 {reasons.map((reason, index) => (
-                                     <RadioButton
-                                         key={index}
-                                         label={reason}
-                                         value={reason}
-                                         name="reason"
-                                         selectedValue={selectedReason}
-                                         onChange={handleReasonChange}
-                                     />
-                                 ))}
-                             </div>
+
+                            <div className="space-y-3">
+                                {reasons.map((reason, index) => (
+                                    <RadioButton
+                                        key={index}
+                                        label={reason}
+                                        value={reason}
+                                        name="reason"
+                                        selectedValue={selectedReason}
+                                        onChange={handleReasonChange}
+                                    />
+                                ))}
+                            </div>
                         </ModularForm>
                     </div>
                 </div>

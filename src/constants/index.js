@@ -2,7 +2,8 @@ import safetyImg from '../images/safety.svg';
 import privacyImg from '../images/privacy.svg';
 import easyToUseImg from '../images/easyToUse.svg';
 import communicationImg from '../images/communication.svg';
-import member1Img from '../images/member1.svg';
+import member1Img from '../images/num1.jpeg';
+// import num1.
 import member2Img from '../images/member2.svg';
 import member3Img from '../images/member3.svg';
 import service1Img from '../images/service1.svg';
@@ -246,12 +247,12 @@ export const teamCards = [
         title: 'Founder',
         description: 'Youngest entrepreneur of India | Winner of SSIP 2.0, Shark Teens 4.0, Startup Gujarat, Startup India, I-Hub Srujan.',
     },
-    {
-        image: member2Img,
-        name: 'Pranjal B',
-        title: 'Co-founder and COO',
-        description: 'Turnaround specialist and customer favorite across industry. Leading all business transactions in HT365.',
-    },
+    // {
+    //     image: member2Img,
+    //     name: 'Pranjal B',
+    //     title: 'Co-founder and COO',
+    //     description: 'Turnaround specialist and customer favorite across industry. Leading all business transactions in HT365.',
+    // },
     {
         image: member3Img,
         name: 'Vijay Radadiya',
@@ -1808,7 +1809,7 @@ export const reviewCards = [
         title: 'Super effective!',
         description: 'Within a few days, I was able to pinpoint the issue, test a solution, and confirm its effectiveness—all by interacting with my support team through the Helptag 365 app. The entire process was seamless and hassle-free.',
         profilePic: profilePicImg,
-        name: 'Yeshe Hagl',
+        name: 'Abhishek Manu',
     },
     {
         image: starImg,
@@ -1822,42 +1823,42 @@ export const reviewCards = [
         title: 'Super effective!',
         description: 'Within a few days, I was able to pinpoint the issue, test a solution, and confirm its effectiveness—all by interacting with my support team through the Helptag 365 app. The entire process was seamless and hassle-free.',
         profilePic: profilePicImg,
-        name: 'Yeshe Hagl',
+        name: 'Charissa Trueman',
     },
     {
         image: starImg,
         title: 'Super effective!',
         description: 'Within a few days, I was able to pinpoint the issue, test a solution, and confirm its effectiveness—all by interacting with my support team through the Helptag 365 app. The entire process was seamless and hassle-free.',
         profilePic: profilePicImg,
-        name: 'Yeshe Hagl',
+        name: 'Gauvain Petya',
     },
     {
         image: starImg,
         title: 'Super effective!',
         description: 'Within a few days, I was able to pinpoint the issue, test a solution, and confirm its effectiveness—all by interacting with my support team through the Helptag 365 app. The entire process was seamless and hassle-free.',
         profilePic: profilePicImg,
-        name: 'Yeshe Hagl',
+        name: 'Yvette Eugenius',
     },
     {
         image: starImg,
         title: 'Super effective!',
         description: 'Within a few days, I was able to pinpoint the issue, test a solution, and confirm its effectiveness—all by interacting with my support team through the Helptag 365 app. The entire process was seamless and hassle-free.',
         profilePic: profilePicImg,
-        name: 'Yeshe Hagl',
+        name: 'Rusiko Afrodita',
     },
     {
         image: starImg,
         title: 'Super effective!',
         description: 'Within a few days, I was able to pinpoint the issue, test a solution, and confirm its effectiveness—all by interacting with my support team through the Helptag 365 app. The entire process was seamless and hassle-free.',
         profilePic: profilePicImg,
-        name: 'Yeshe Hagl',
+        name: 'Shukriya Rumbidzai',
     },
     {
         image: starImg,
         title: 'Super effective!',
         description: 'Within a few days, I was able to pinpoint the issue, test a solution, and confirm its effectiveness—all by interacting with my support team through the Helptag 365 app. The entire process was seamless and hassle-free.',
         profilePic: profilePicImg,
-        name: 'Yeshe Hagl',
+        name: 'Varnava Anya',
     },
     {
         image: starImg,
