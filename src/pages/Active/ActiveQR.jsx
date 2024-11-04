@@ -6,13 +6,20 @@ import { HeroBgSection, Testimony, Input, ModularForm } from './../../components
 import { toast } from 'react-toastify';
 import { ACTIVE_QR } from '../../components/api';
 
+
 const defaultFormData = {
+    user_id:'',
     code: '',
 }
 export function ActiveQR() {
     const [formData, setFormData] = useState(defaultFormData);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const [userId, setUserId] = useState();
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        setUserId(params.get('userId'));
+    }, []);
 
     const handleChange = async (e) => {
         setFormData(prevState => ({
@@ -67,6 +74,7 @@ export function ActiveQR() {
                     <div className='col-span-1 md:col-span-3 lg:col-span-1 xl:px-8'>
                         <ModularForm title="Active QR" description="Active Your QR code and Get More" submitButtonName={isLoading ? 'Activating...' : 'Activate'} onSubmit={handleSubmit}>
                             <div className='grid grid-cols-2 gap-x-4 gap-y-2 md:gap-y-4'>
+                                <Input wrapperClassName='col-span-2' label="" id="user_id" name="user_id" type="hidden" placeholder="Enter Your Code Here" value={userId} onChange={handleChange} />
                                 <Input wrapperClassName='col-span-2' label="Activaion code" id="code" name="code" type="text" placeholder="Enter Your Code Here" value={formData.code} onChange={handleChange} />
                             </div>
                         </ModularForm>

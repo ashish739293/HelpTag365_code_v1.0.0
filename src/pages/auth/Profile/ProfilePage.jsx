@@ -140,10 +140,9 @@ export function ProfilePage() {
         if (registerFormData.state_id) {
             handleStateChange(registerFormData.state_id);
         }
-    }, [registerFormData.state_id]); // Dependency on state_id
+    }, [registerFormData.state_id]);
     
     const isActiveQR = true;
-
     return (
         <main className='relative w-full h-full px-2.5 md:px-8 overflow-hidden'>
             <HeroBgSection sectionClassName='!pb-2'>
@@ -162,7 +161,7 @@ export function ProfilePage() {
                     <div className='col-span-1 md:col-span-3 lg:col-span-1 xl:px-8'>
                         <ModularForm title={`Welcome, ${registerFormData.name}`} description="Please activate your QR code" submitButtonName='Update' onSubmit={handleSubmit}>
                             {isActiveQR && (
-                                <Link to={ACTIVE_QR} className='w-full p-3 bg-primary-normal text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors'>
+                                <Link to={`${ACTIVE_QR}?userId=${registerFormData.id}`} id={registerFormData.id} className='w-full p-3 bg-primary-normal text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors'>
                                     Activate Your QR
                                 </Link>
                             )}
