@@ -1,5 +1,5 @@
 // Context.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState ,useEffect } from 'react';
 
 // Create a UserContext to hold user-related data and functions
 const UserContext = createContext();
@@ -9,10 +9,13 @@ export const UserProvider = ({ children }) => {
   // State to track if the user is logged in
   const [isLogin, setIsLogin] = useState(false);
   const [userDetails, setUserDetails] = useState({});
+  const [languages, setLanguages] = useState({});
+  const [selectedLanguage, setSelectedLanguage] = useState(null); // Default to the first language
+
 
 
   return (
-    <UserContext.Provider value={{isLogin,setIsLogin, userDetails, setUserDetails }}>
+    <UserContext.Provider value={{isLogin,setIsLogin, userDetails, setUserDetails,languages, setLanguages ,selectedLanguage,setSelectedLanguage}}>
       {children}
     </UserContext.Provider>
   );

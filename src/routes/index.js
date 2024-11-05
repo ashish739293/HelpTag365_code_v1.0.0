@@ -7,4 +7,4 @@ export const NOT_FOUND_PATH = '*';
 export const USER_PROFILE = '/profile';
 export const ACTIVE_QR = '/activeqr';
 export const LOGOUT_ROUTE = '/logout';
-export const SERVICE_PATH = '/service';
+export const SERVICE_PATH = '/service/:id';
