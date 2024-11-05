@@ -13,3 +13,4 @@ export const ACTIVE_QR = `${API_BASE_URL}/activeqr`;
 export const UPDATE_USER_DETAILS = `${API_BASE_URL}/update-details`;
 export const LOGOUT_API = `${API_BASE_URL}/logout`;
 export const CONTACT_US = `${API_BASE_URL}/contact-us`;
+export const CONTACT_OWNER = `${API_BASE_URL}/contact-owner`;

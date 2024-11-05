@@ -15,7 +15,7 @@ export function ActiveQR() {
     const [formData, setFormData] = useState(defaultFormData);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const [userId, setUserId] = useState();
+    const [userId, setUserId] = useState('');
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         setUserId(params.get('userId'));
@@ -37,7 +37,10 @@ export function ActiveQR() {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    user_id: userId,
+                    code: formData.code,
+                }),
             });
             const data = await response.json();
             if (response.ok) {

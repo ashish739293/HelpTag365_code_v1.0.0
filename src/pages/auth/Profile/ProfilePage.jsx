@@ -105,7 +105,6 @@ export function ProfilePage() {
             toast.error('An error occurred: ' + error.message, { position: "top-right" });
         }
     };
-
     // Fetch states
     useEffect(() => {
         const fetchStates = async () => {
@@ -142,7 +141,6 @@ export function ProfilePage() {
         }
     }, [registerFormData.state_id]);
     
-    const isActiveQR = true;
     return (
         <main className='relative w-full h-full px-2.5 md:px-8 overflow-hidden'>
             <HeroBgSection sectionClassName='!pb-2'>
@@ -160,7 +158,7 @@ export function ProfilePage() {
                     </div>
                     <div className='col-span-1 md:col-span-3 lg:col-span-1 xl:px-8'>
                         <ModularForm title={`Welcome, ${registerFormData.name}`} description="Please activate your QR code" submitButtonName='Update' onSubmit={handleSubmit}>
-                            {isActiveQR && (
+                            {!registerFormData.uuid && (
                                 <Link to={`${ACTIVE_QR}?userId=${registerFormData.id}`} id={registerFormData.id} className='w-full p-3 bg-primary-normal text-white font-semibold rounded-xl hover:bg-primary-dark transition-colors'>
                                     Activate Your QR
                                 </Link>

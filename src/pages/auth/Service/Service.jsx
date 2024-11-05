@@ -6,7 +6,7 @@ import { HOME_PATH, ACTIVE_QR } from '../../../routes';
 import { HeroBgSection, Testimony, ModularForm, GradientSection, Badge, ProcessCard, QRSection, RadioButton } from '../../../components';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
-import { UPDATE_USER_DETAILS } from '../../../components/api';
+import { CONTACT_OWNER } from '../../../components/api';
 import { NotFoundPage } from '../../Error/NotFoundPage';
 import { useUserData } from '../../../Context';
 
@@ -15,7 +15,7 @@ export function Service() {
     const [selectedReason, setSelectedReason] = useState('');
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false); // New state for button loading
+    const [loading, setLoading] = useState(false);
     const { id } = useParams();
     const { setLanguages, selectedLanguage, setSelectedLanguage } = useUserData();
 
@@ -42,20 +42,18 @@ export function Service() {
                 console.log('Error fetching states: ' + error.message);
             }
         };
-
         getServices();
     }, [id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true); // Set loading to true when submit starts
+        setLoading(true); 
 
         try {
-            const response = await fetch(UPDATE_USER_DETAILS, {
+            const response = await fetch(CONTACT_OWNER, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`,
                 },
                 body: JSON.stringify({ reason: selectedReason })
             });
@@ -72,14 +70,14 @@ export function Service() {
         } catch (error) {
             toast.error('An error occurred: ' + error.message, { position: "top-right" });
         } finally {
-            setLoading(false); // Reset loading state once response is received
+            setLoading(false);
         }
     };
 
     if (error) {
         return <NotFoundPage />;
     }
-
+    
     if (!data) {
         return <div>Loading...</div>;
     }
