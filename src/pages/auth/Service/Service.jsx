@@ -48,6 +48,11 @@ export function Service() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true); 
+        const params ={
+            user_id:id,
+            service_id:selectedReason,
+            lang_id:selectedLanguage.id
+        }
 
         try {
             const response = await fetch(CONTACT_OWNER, {
@@ -55,7 +60,7 @@ export function Service() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ reason: selectedReason })
+                body: JSON.stringify(params)
             });
 
             const data = await response.json();
